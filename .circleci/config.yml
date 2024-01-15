@@ -8,7 +8,12 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile_name: default
-      - run: aws --version && aws iam list-users
+      - run: 
+          name: Describe all EC2 instances
+          command: |
+              touch inventory
+              echo [all] > inventory
+              aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory
 workflows:
   aws-cli:
     jobs:
