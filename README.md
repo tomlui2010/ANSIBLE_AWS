@@ -1,1 +1,2 @@
 # ANSIBLE_AWS
+This circleci build pipeline will echo out the list of ec2 instances in the region. This data is fetched via AWS cli using AWS EC2 describe instances and copied to an 'inventory' file which will be later used by ansible
