@@ -8,7 +8,7 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile_name: default
-      - run: aws --version
+      - run: aws --version && aws iam list-users
 workflows:
   aws-cli:
     jobs:
