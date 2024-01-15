@@ -8,7 +8,7 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile_name: default
-      - run: aws ec2 describe-instances
+      - run: aws --version
 workflows:
   aws-cli:
     jobs:
