@@ -7,8 +7,8 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup:
-          profile_name: example
-      - run: echo "Run your code here"
+          profile_name: default
+      - run: aws ec2 describe-instances
 workflows:
   aws-cli:
     jobs:
