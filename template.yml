@@ -11,7 +11,7 @@ Resources:
     Properties:
       SecurityGroups:
         - !Ref InstanceSecurityGroup
-      KeyName: Ref: ImportedKeyPair
+      KeyName: !Ref ImportedKeyPair
       ImageId: 'ami-008fe2fc65df48dac' 
       InstanceType: t2.micro
   InstanceSecurityGroup:
