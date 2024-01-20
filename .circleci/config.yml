@@ -9,13 +9,13 @@ jobs:
       - aws-cli/setup:
           profile_name: default
       - run: 
-          name: Describe all EC2 instances
+          name: Cloudformation script
           command: | 
-          aws cloudformation deploy 
-          --template-file template.yml 
-          --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} 
+            aws cloudformation deploy 
+            --template-file template.yml 
+            --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} 
 workflows:
   aws-cli:
     jobs:
-      - aws-cli-example:
+      - create_infrastructure:
           context: ansible-aws
