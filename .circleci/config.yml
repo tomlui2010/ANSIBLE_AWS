@@ -2,7 +2,7 @@ version: '2.1'
 orbs:
   aws-cli: circleci/aws-cli@4.0
 jobs:
-  aws-cli-example:
+  create_infrastructure:
     executor: aws-cli/default
     steps:
       - checkout
@@ -10,11 +10,10 @@ jobs:
           profile_name: default
       - run: 
           name: Describe all EC2 instances
-          command: |
-              touch inventory
-              echo [all] > inventory
-              aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory
-              cat inventory
+          command: | 
+          aws cloudformation deploy 
+          --template-file template.yml 
+          --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} 
 workflows:
   aws-cli:
     jobs:
