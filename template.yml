@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Template to create infrastructure for pipeline deployment 
 Resources:
+  ImportedKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: MyEC2KeyPair
+      PublicKeyMaterial: ${CIRCLECI_PUBLIC_KEY} # Replace with the actual environment variable name from CircleCI
   EC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
