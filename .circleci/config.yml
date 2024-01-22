@@ -43,3 +43,4 @@ workflows:
     jobs:
       - create_infrastructure:
           context: ansible-aws
+      - configure_infrastructure
