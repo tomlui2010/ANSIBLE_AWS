@@ -21,6 +21,22 @@ jobs:
              --output text >> inventory
              ls -ll
              cat inventory
+  configure_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["SHA256:acjv5MeGPfYm3yrqf0zayer1QKPvHuAU9a+BuZmaiuM"]
+      - run: 
+          name: Install Ansible
+          command: |
+             apk add --update ansible
+             ansible --version
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+             ansible-playbook -i inventory main.yml
 
 workflows:
   aws-cli:
