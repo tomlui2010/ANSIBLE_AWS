@@ -3,7 +3,7 @@ Description: Template to create infrastructure for pipeline deployment
 Parameters:
   ImportedKeyPair:
     Type: String
-   # Default: my-ansible-host 
+    Default: my-ansible-host 
 Resources:
   EC2Instance:
     Type: 'AWS::EC2::Instance'
