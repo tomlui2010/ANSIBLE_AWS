@@ -64,7 +64,7 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              ansible-playbook -i /tmp/inventory main.yml
-
+      #- destroy_environment
 workflows:
   aws-cli:
     jobs:
