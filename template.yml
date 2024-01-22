@@ -13,6 +13,9 @@ Resources:
       KeyName: !Ref ImportedKeyPair
       ImageId: 'ami-008fe2fc65df48dac' 
       InstanceType: t2.micro
+      Tags:
+        - Key: Name
+          Value: my-app-server
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
