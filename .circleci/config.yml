@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-             hostname -I | awk '{print $1}'
+             hostname -i | awk '{print $1}'
              ansible-playbook -i /tmp/inventory main.yml
       #- destroy_environment
 workflows:
