@@ -20,6 +20,7 @@ jobs:
              --query 'Reservations[*].Instances[*].PublicIpAddress' \
              --output text >> inventory
              ls -ll
+             cat inventory
 
 workflows:
   aws-cli:
