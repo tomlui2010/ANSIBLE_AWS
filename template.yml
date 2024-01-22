@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Template to create infrastructure for pipeline deployment
 Parameters:
   ImportedKeyPair:
-    Type: AWS::EC2::KeyPair::KeyName
-    Description: Name of the existing EC2 Key Pair 
+    Type: String
+    Default: my-ansible-host 
 Resources:
   EC2Instance:
     Type: 'AWS::EC2::Instance'
