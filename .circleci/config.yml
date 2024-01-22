@@ -39,6 +39,7 @@ jobs:
              aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].PrivateIpAddress' \
              --output text >> /tmp/inventory
+             echo " ansible_user=ubuntu" >> /tmp/inventory
 
       - persist_to_workspace:
           root: /tmp
