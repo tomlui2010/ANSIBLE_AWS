@@ -9,11 +9,18 @@ jobs:
       - aws-cli/setup:
           profile_name: default
       - run: 
-          name: Cloudformation scripts
+          name: Cloudformation script to create an Ec2 instance
           command: |
-           echo $CIRCLECI_KEY_PAIR
-           # aws ec2 describe-instances | jq -r '.Reservations[].Instances[]|.InstanceId+" "+.InstanceType+" "+(.Tags[] | select(.Key == "Name").Value)' 
-           aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+             aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+      - run:
+          name: AWS CLI script to create inventory file
+          command: |
+             echo "[all]" > inventory
+             aws ec2 describe-instances \
+             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+             --output text >> inventory
+             ls -ll
+
 workflows:
   aws-cli:
     jobs:
