@@ -40,8 +40,9 @@ jobs:
              --output text >> inventory
              ls -ll
              cat inventory
+
       - persist_to_workspace:
-          root: /workspace
+          root: /tmp
           paths: 
             - inventory
       - destroy_environment
@@ -53,7 +54,7 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["SHA256:acjv5MeGPfYm3yrqf0zayer1QKPvHuAU9a+BuZmaiuM"]
       - attach_workspace:
-          at: /workspace
+          at: /tmp
       - run: 
           name: Install Ansible
           command: |
@@ -62,7 +63,7 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-             ansible-playbook -i /workspace/inventory main.yml
+             ansible-playbook -i /tmp/inventory main.yml
 
 workflows:
   aws-cli:
