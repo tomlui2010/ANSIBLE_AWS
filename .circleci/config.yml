@@ -1,6 +1,25 @@
 version: '2.1'
 orbs:
   aws-cli: circleci/aws-cli@4.0
+commands:
+  # Exercise: Reusable Job Code
+  print_pipeline_id:
+    parameters:
+      id: 
+        type: string
+    steps:
+      - run: echo << parameters.id >>
+
+  # Exercise - Rollback
+  destroy_environment:
+    steps:
+      - run:
+          name: Destroy environment
+          # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
+          # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 jobs:
   create_infrastructure:
     executor: aws-cli/default
@@ -21,6 +40,11 @@ jobs:
              --output text >> inventory
              ls -ll
              cat inventory
+      - persist_to_workspace:
+          root: /workspace
+          paths: 
+            - inventory
+      - destroy_environment
   configure_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -28,6 +52,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["SHA256:acjv5MeGPfYm3yrqf0zayer1QKPvHuAU9a+BuZmaiuM"]
+      - attach_workspace:
+          at: /workspace
       - run: 
           name: Install Ansible
           command: |
@@ -36,7 +62,7 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-             ansible-playbook -i inventory main.yml
+             ansible-playbook -i /workspace/inventory main.yml
 
 workflows:
   aws-cli:
