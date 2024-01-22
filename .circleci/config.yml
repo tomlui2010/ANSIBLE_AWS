@@ -36,7 +36,7 @@ jobs:
           command: |
              echo "[all]" > /tmp/inventory
              aws ec2 describe-instances \
-             --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].PrivateIpAddress' \
+             --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].PublicIpAddress' \
              --output text >> /tmp/inventory
 
       - persist_to_workspace:
