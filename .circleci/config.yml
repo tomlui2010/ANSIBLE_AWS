@@ -34,11 +34,11 @@ jobs:
       - run:
           name: AWS CLI script to create inventory file
           command: |
-             echo "[all]" > inventory
+             echo "[all]" > /tmp/inventory
              aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].PublicIpAddress' \
-             --output text >> inventory
-             ls -ll
+             --output text >> /tmp/inventory
+             pwd
              cat inventory
 
       - persist_to_workspace:
