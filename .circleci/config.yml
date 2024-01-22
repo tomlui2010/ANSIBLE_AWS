@@ -38,8 +38,6 @@ jobs:
              aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].PublicIpAddress' \
              --output text >> /tmp/inventory
-             pwd
-             cat inventory
 
       - persist_to_workspace:
           root: /tmp
