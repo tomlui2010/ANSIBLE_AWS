@@ -62,10 +62,12 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              hostname -i | awk '{print $1}'
+             pwd
+             ls -ll
              ansible-playbook -i /tmp/inventory main.yml -vvv
       #- destroy_environment
 workflows:
-  aws-cli:
+  app-deployment:
     jobs:
       - create_infrastructure:
           context: ansible-aws
