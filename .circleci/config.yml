@@ -49,9 +49,9 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: 
-            - "SHA256:3GbirewTV+ONqyzpC4eF1A/BqIc4rlBd604wqg7v3UM"
+      # - add_ssh_keys:
+      #     fingerprints: 
+      #       - "SHA256:3GbirewTV+ONqyzpC4eF1A/BqIc4rlBd604wqg7v3UM"
       - attach_workspace:
           at: /tmp
       - run: 
