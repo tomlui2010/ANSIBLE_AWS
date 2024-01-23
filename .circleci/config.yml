@@ -50,7 +50,8 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["SHA256:+3VL1g52e8x9TZV+9yLDRkHMGPAe7IbDxHXYMue691M"]
+          fingerprints: 
+            - "SHA256:+3VL1g52e8x9TZV+9yLDRkHMGPAe7IbDxHXYMue691M"
       - attach_workspace:
           at: /tmp
       - run: 
@@ -64,8 +65,9 @@ jobs:
              hostname -i | awk '{print $1}'
              pwd
              ls -ll
+             cat
              export ANSIBLE_DEBUG=1
-             ansible-playbook -i /tmp/inventory main.yml -vvv -e "ANSIBLE_CONFIG=./ansible.cfg"
+             ansible-playbook -i /tmp/inventory main.yml -vvv 
       #- destroy_environment
 workflows:
   app-deployment:
