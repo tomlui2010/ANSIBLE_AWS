@@ -62,7 +62,30 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              ansible-playbook -i /tmp/inventory main.yml -vvv 
-      #- destroy_environment
+      - destroy_environment
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: 
+          name: Install curl
+          command: |
+             apk add --update curl
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Smoke test
+          command: |
+            URL = $(grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /tmp/inventory)
+             # Test if website exists
+            if curl -s --head ${URL} 
+            then
+              return 0
+            else
+              return 1
+            fi
+      - destroy_environment
+
 workflows:
   app-deployment:
     jobs:
