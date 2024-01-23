@@ -51,7 +51,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: 
-            - "SHA256:+3VL1g52e8x9TZV+9yLDRkHMGPAe7IbDxHXYMue691M"
+            - "SHA256:3GbirewTV+ONqyzpC4eF1A/BqIc4rlBd604wqg7v3UM"
       - attach_workspace:
           at: /tmp
       - run: 
