@@ -57,15 +57,10 @@ jobs:
           name: Install Ansible
           command: |
              apk add --update ansible
-             ansible --version
+             apk add --update openssh
       - run:
           name: Run Playbook and Configure server
           command: |
-             hostname -i | awk '{print $1}'
-             pwd
-             ls -ll
-             cat
-             export ANSIBLE_DEBUG=1
              ansible-playbook -i /tmp/inventory main.yml -vvv 
       #- destroy_environment
 workflows:
