@@ -64,7 +64,8 @@ jobs:
              hostname -i | awk '{print $1}'
              pwd
              ls -ll
-             ansible-playbook -i /tmp/inventory main.yml -vvv
+             export ANSIBLE_DEBUG=1
+             ansible-playbook -i /tmp/inventory main.yml -vvv -e "ANSIBLE_CONFIG=./ansible.cfg"
       #- destroy_environment
 workflows:
   app-deployment:
