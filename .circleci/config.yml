@@ -66,6 +66,11 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - name: Update APT Cache
+        become: true
+        apt:
+          update_cache: yes
+
       - add_ssh_keys:
           fingerprints: ["SHA256:+3VL1g52e8x9TZV+9yLDRkHMGPAe7IbDxHXYMue691M"]
       - attach_workspace:
