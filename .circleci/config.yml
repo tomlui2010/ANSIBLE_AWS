@@ -37,10 +37,10 @@ jobs:
              echo "[all]" > /tmp/inventory
              echo "Waiting for the EC2 instance to be in the running state..."
 
-             INSTANCE_ID=$(aws ec2 describe-instances \
+             INSTANCE_IDS=$(aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' \
              --output json)
-             INSTANCE_ID=$(echo $INSTANCE_ID | jq -r '.[0]')
+             INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r '.[0]')
 
              echo "Instance ID: $INSTANCE_ID"
 
