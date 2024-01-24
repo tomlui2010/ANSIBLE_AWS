@@ -82,12 +82,14 @@ jobs:
       #- destroy_environment
   smoke_test:
     docker:
-      - image: alpine:latest
+      - image: amazon/aws-cli
     steps:
       - run: 
           name: Install curl
+          become: true
           command: |
-             apk add --update curl
+             apt update && apt upgrade
+             apt install curl
       - attach_workspace:
           at: /tmp
       - run:
