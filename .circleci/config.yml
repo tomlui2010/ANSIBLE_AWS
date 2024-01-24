@@ -40,7 +40,7 @@ jobs:
              --query 'Reservations[*].Instances[?State.Name != `terminated` && Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' \
              --output json)
              echo $INSTANCE_IDS 
-             INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r '.[]' | select(. != null)[] | grep -oP '"\K[^"]+' | awk '{print $1}')
+             INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r 'flatten | select(. != null)[] | select(length > 0)' | grep -oP '"\K[^"]+' | awk '{print $1}')
 
              echo "Instance ID: $INSTANCE_ID"
 
