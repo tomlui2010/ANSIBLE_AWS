@@ -36,16 +36,25 @@ jobs:
           command: |
              echo "[all]" > /tmp/inventory
              echo "Waiting for the EC2 instance to be in the running state..."
+
              INSTANCE_ID=$(aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' \
-             --output text)
-             echo $(INSTANCE_ID)
-             aws ec2 wait instance-running --instance-ids [$(INSTANCE_ID)]
+             --output json)
+             INSTANCE_ID=$(echo $INSTANCE_ID | jq -r '.[0]')
+
+             echo "Instance ID: $INSTANCE_ID"
+
+             aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+
              echo "EC2 instance is now running."             
            
-             aws ec2 describe-instances \
-             --query 'Reservations[*].Instances[?State.Name == `running` && ?Tags[?Key==`Name` && Value==`my-app-server`]].PublicIpAddress' \
-             --output text >> /tmp/inventory
+             PUBLIC_IP=$(aws ec2 describe-instances \
+              --instance-ids $INSTANCE_ID \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            
+             echo "Public IP: $PUBLIC_IP"
+             echo "$PUBLIC_IP" >> /tmp/inventory
 
       - persist_to_workspace:
           root: /tmp
