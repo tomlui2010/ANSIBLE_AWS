@@ -76,8 +76,8 @@ jobs:
       - run:
           name: Smoke test
           command: |
-            URL = $(grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /tmp/inventory)
-             # Test if website exists
+            URL = "http://" + $(grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /tmp/inventory) + ":3000"
+            # Test if website exists
             if curl -s --head ${URL} 
             then
               return 0
