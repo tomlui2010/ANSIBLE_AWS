@@ -81,15 +81,11 @@ jobs:
              ansible-playbook -i /tmp/inventory main.yml -vvv 
       #- destroy_environment
   smoke_test:
-    docker:
-      - image: amazon/aws-cli
+    executor: aws-cli/default
     steps:
-      - run: 
-          name: Install curl
-          become: true
-          command: |
-             apt update && apt upgrade
-             apt install curl
+      - checkout
+      - aws-cli/setup:
+          profile_name: default
       - attach_workspace:
           at: /tmp
       - run:
@@ -103,7 +99,6 @@ jobs:
             else
               exit 1
             fi
-
       - destroy_environment
 
 workflows:
@@ -117,3 +112,4 @@ workflows:
       - smoke_test:
           requires: 
             - configure_infrastructure
+          context: ansible-aws
