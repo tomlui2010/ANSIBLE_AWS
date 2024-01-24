@@ -38,6 +38,7 @@ jobs:
              echo "Waiting for the EC2 instance to be in the running state..."
              INSTANCE_ID=$(aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId')
+             --output text
              echo $(INSTANCE_ID)
              aws ec2 wait instance-running --instance-ids [$(INSTANCE_ID)]
              echo "EC2 instance is now running."             
