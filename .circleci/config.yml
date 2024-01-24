@@ -101,8 +101,10 @@ jobs:
             else
               exit 1
             fi
+            exit 1
 
-      #- destroy_environment
+      - destroy_environment
+        when: on_fail
 
 workflows:
   app-deployment:
