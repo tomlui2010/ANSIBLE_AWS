@@ -36,9 +36,8 @@ jobs:
           command: |
              echo "[all]" > /tmp/inventory
              echo "Waiting for the EC2 instance to be in the running state..."
-             stack_name='myStack-${CIRCLE_WORKFLOW_ID:0:5}'
              INSTANCE_IDS=$(aws ec2 describe-instances \
-             --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server-$(stack_name)`]].InstanceId' \
+             --query 'Reservations[*].Instances[?State.Name != `terminated` && ?Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' \
              --output json)
              INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r '.[0]' | grep -oP '"\K[^"]+' | awk '{print $1}')
 

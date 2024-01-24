@@ -15,7 +15,7 @@ Resources:
       InstanceType: t2.micro
       Tags:
         - Key: Name
-          Value: !Sub 'my-app-server-${AWS::StackId}'
+          Value: !Sub 'my-app-server'
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
