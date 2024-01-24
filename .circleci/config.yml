@@ -40,7 +40,7 @@ jobs:
              INSTANCE_IDS=$(aws ec2 describe-instances \
              --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' \
              --output json)
-             INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r '.[0]')
+             INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r '.[0]' | grep -oP '"\K[^"]+' | awk '{print $1}')
 
              echo "Instance ID: $INSTANCE_ID"
 
