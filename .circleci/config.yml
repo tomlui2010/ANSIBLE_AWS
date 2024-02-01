@@ -21,16 +21,20 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 jobs:
-  create_infrastructure:
+  create_prometheus_infrastructure:
     executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
           profile_name: default
       - run: 
-          name: Cloudformation script to create an Ec2 instance
+          name: Cloudformation script to create an Ec2 instance for prmoetheus server and prometheus node exporter
           command: |
              aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+      # Extract and store the public DNS in a file
+      - run:
+          name: Extract Public DNS
+          command: echo "PUBLIC_DNS=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --query 'Stacks[0].Outputs[?OutputKey==`NodeExporterPublicDNS`].OutputValue' --output text)" > /tmp/public_dns.env
       - run:
           name: AWS CLI script to create inventory file
           command: |
@@ -60,6 +64,7 @@ jobs:
           root: /tmp
           paths: 
             - inventory
+            - public_dns.env
       - destroy_environment
   configure_infrastructure:
     docker:
@@ -78,28 +83,28 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-             ansible-playbook -i /tmp/inventory main.yml -vvv 
+             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory main.yml -vvv 
       #- destroy_environment
-  smoke_test:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup:
-          profile_name: default
-      - attach_workspace:
-          at: /tmp
-      - run:
-          name: Smoke test
-          command: |
-            URL="http://$(grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /tmp/inventory):3001"
-            # Test if website exists
-            if curl -s --head "${URL}" | head -n 1 | grep "200 OK" > /dev/null
-            then
-              exit 0
-            else
-              exit 1
-            fi
-      - destroy_environment
+  # smoke_test:
+  #   executor: aws-cli/default
+  #   steps:
+  #     - checkout
+  #     - aws-cli/setup:
+  #         profile_name: default
+  #     - attach_workspace:
+  #         at: /tmp
+  #     - run:
+  #         name: Smoke test
+  #         command: |
+  #           URL="http://$(grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /tmp/inventory):3001"
+  #           # Test if website exists
+  #           if curl -s --head "${URL}" | head -n 1 | grep "200 OK" > /dev/null
+  #           then
+  #             exit 0
+  #           else
+  #             exit 1
+  #           fi
+  #     - destroy_environment
 
 workflows:
   app-deployment:
@@ -109,7 +114,7 @@ workflows:
       - configure_infrastructure:
           requires: 
             - create_infrastructure
-      - smoke_test:
-          requires: 
-            - configure_infrastructure
-          context: ansible-aws
+      # - smoke_test:
+      #     requires: 
+      #       - configure_infrastructure
+      #     context: ansible-aws

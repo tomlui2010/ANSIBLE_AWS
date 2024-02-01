@@ -1,0 +1,75 @@
+---
+- name: Create Prometheus user
+  become: true  
+  command: |
+    useradd --no-create-home prometheus
+    mkdir /etc/prometheus
+    mkdir /var/lib/prometheus
+
+- name: Download Prometheus binary
+  get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v2.49.1/prometheus-2.49.1.linux-amd64.tar.gz"
+    dest: "/tmp/prometheus.tar.gz"
+
+- name: Extract Prometheus binary
+  ansible.builtin.unarchive:
+    src: "/tmp/prometheus.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+
+- name: Rename Prometheus directory
+  command: mv "/opt/prometheus-2.49.1.linux-amd64" "/opt/prometheus"
+
+- name: Installing Prometheus - final step
+  become: true
+  command: |
+    cp /opt/prometheus/prometheus /usr/local/bin
+    cp /opt/prometheus/promtool /usr/local/bin/
+    cp -r /opt/prometheus/consoles /etc/prometheus
+    cp -r /opt/prometheus/console_libraries /etc/prometheus
+    rm -rf /opt/prometheus 
+    rm -rf /tmp/prometheus.tar.gz
+
+- name: Create Prometheus data directory
+  file:
+    path: "/var/lib/prometheus"
+    state: directory
+
+- name: Set permissions for Prometheus 
+  become: true
+  command: |
+    chown prometheus:prometheus /etc/prometheus
+    chown prometheus:prometheus /usr/local/bin/prometheus
+    chown prometheus:prometheus /usr/local/bin/promtool
+    chown -R prometheus:prometheus /etc/prometheus/consoles
+    chown -R prometheus:prometheus /etc/prometheus/console_libraries
+    chown -R prometheus:prometheus /var/lib/prometheus
+
+- name: Set permissions for Prometheus binary
+  file:
+    path: "/opt/prometheus/prometheus"
+    state: file
+    mode: 755
+
+- name: Copy Prometheus configuration
+  template:
+    src: prometheus.yml.j2
+    dest: "/opt/prometheus/prometheus.yml"
+  vars: 
+    prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
+
+- name: Copy systemd service file
+  template:
+    src: prometheus.service.j2
+    dest: "/etc/systemd/system/prometheus.service"
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+    state: reloaded
+
+- name: Ensure prometheus is running and enabled
+  systemd:
+    name: prometheus
+    state: started
+    enabled: yes

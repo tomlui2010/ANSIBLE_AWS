@@ -1,35 +1,55 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Template to create infrastructure for pipeline deployment
 Parameters:
-  ImportedKeyPair:
+  SecurityKeyPair:
     Type: String
-    Default: my-ansible-host 
+    Default: prometheus 
 Resources:
-  EC2Instance:
+  EC2InstancePrometheusServer:
     Type: 'AWS::EC2::Instance'
     Properties:
       SecurityGroups:
         - !Ref InstanceSecurityGroup
-      KeyName: !Ref ImportedKeyPair
+      KeyName: !Ref SecurityKeyPair
       ImageId: 'ami-008fe2fc65df48dac' 
       InstanceType: t2.micro
       Tags:
         - Key: Name
-          Value: !Sub 'my-app-server'
+          Value: 'prometheus-server'
+  EC2InstancePrometheusNodeExporter:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      KeyName: !Ref SecurityKeyPair
+      ImageId: 'ami-008fe2fc65df48dac' 
+      InstanceType: t2.micro
+      Tags:
+        - Key: Name
+          Value: 'prometheus-node-exporter'
+    
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Enable SSH access via port 22 and HTTP connections
+      GroupDescription: Opening ports 9090, 9093, 9100 and SSH
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
+          FromPort: '9090'
+          ToPort: '9090'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: '22'
           ToPort: '22'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: '3000'
-          ToPort: '3000'
+          FromPort: '9100'
+          ToPort: '9100'
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '9093'
+          ToPort: '9093'
+          CidrIp: 0.0.0.0/0
+Outputs:
+  NodeExporterPublicDNS:
+    Value: !GetAtt EC2InstancePrometheusNodeExporter.PublicDnsName
+   
