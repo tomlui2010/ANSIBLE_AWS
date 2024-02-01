@@ -21,9 +21,7 @@ commands:
 
 jobs:
   create_prometheus_infrastructure:
-    docker:
-      - image: amazonlinux:2
-
+    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
