@@ -1,8 +1,9 @@
 version: '2.1'
+
 orbs:
   aws-cli: circleci/aws-cli@4.0
+
 commands:
-  # Exercise: Reusable Job Code
   print_pipeline_id:
     parameters:
       id: 
@@ -10,28 +11,27 @@ commands:
     steps:
       - run: echo << parameters.id >>
 
-  # Exercise - Rollback
   destroy_environment:
     steps:
       - run:
           name: Destroy environment
-          # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
-          # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
           when: on_fail
           command: |
             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+
 jobs:
   create_prometheus_infrastructure:
-    executor: aws-cli/default
+    docker:
+      - image: amazonlinux:2
+
     steps:
       - checkout
       - aws-cli/setup:
           profile_name: default
-      - run: 
-          name: Cloudformation script to create an Ec2 instance for prmoetheus server and prometheus node exporter
+      - run:
+          name: Cloudformation script to create an EC2 instance
           command: |
              aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
-      # Extract and store the public DNS in a file
       - run:
           name: Extract Public DNS
           command: echo "PUBLIC_DNS=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --query 'Stacks[0].Outputs[?OutputKey==`NodeExporterPublicDNS`].OutputValue' --output text)" > /tmp/public_dns.env
@@ -40,23 +40,11 @@ jobs:
           command: |
              echo "[all]" > /tmp/inventory
              echo "Waiting for the EC2 instance to be in the running state..."
-             INSTANCE_IDS=$(aws ec2 describe-instances \
-             --query 'Reservations[*].Instances[?State.Name != `terminated` && Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' \
-             --output json)
-             echo $INSTANCE_IDS 
+             INSTANCE_IDS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[?State.Name != `terminated` && Tags[?Key==`Name` && Value==`my-app-server`]].InstanceId' --output json)
              INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r 'flatten | select(. != null)[] | select(length > 0)' )
-
              echo "Instance ID: $INSTANCE_ID"
-
              aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-
-             echo "EC2 instance is now running."             
-           
-             PUBLIC_IP=$(aws ec2 describe-instances \
-              --instance-ids $INSTANCE_ID \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            
+             PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
              echo "Public IP: $PUBLIC_IP"
              echo "$PUBLIC_IP" >> /tmp/inventory
 
@@ -66,9 +54,11 @@ jobs:
             - inventory
             - public_dns.env
       - destroy_environment
-  cconfigure_prometheus_infrastructure:
+
+  configure_prometheus_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
+
     steps:
       - checkout
       - add_ssh_keys:
@@ -84,27 +74,6 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory main.yml -vvv 
-      #- destroy_environment
-  # smoke_test:
-  #   executor: aws-cli/default
-  #   steps:
-  #     - checkout
-  #     - aws-cli/setup:
-  #         profile_name: default
-  #     - attach_workspace:
-  #         at: /tmp
-  #     - run:
-  #         name: Smoke test
-  #         command: |
-  #           URL="http://$(grep -E -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' /tmp/inventory):3001"
-  #           # Test if website exists
-  #           if curl -s --head "${URL}" | head -n 1 | grep "200 OK" > /dev/null
-  #           then
-  #             exit 0
-  #           else
-  #             exit 1
-  #           fi
-  #     - destroy_environment
 
 workflows:
   app-deployment:
@@ -114,7 +83,3 @@ workflows:
       - configure_prometheus_infrastructure:
           requires: 
             - create_prometheus_infrastructure
-      # - smoke_test:
-      #     requires: 
-      #       - configure_infrastructure
-      #     context: ansible-aws
