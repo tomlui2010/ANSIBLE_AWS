@@ -66,7 +66,7 @@ jobs:
             - inventory
             - public_dns.env
       - destroy_environment
-  configure_infrastructure:
+  cconfigure_prometheus_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
     steps:
@@ -109,11 +109,11 @@ jobs:
 workflows:
   app-deployment:
     jobs:
-      - create_infrastructure:
+      - create_prometheus_infrastructure:
           context: ansible-aws
-      - configure_infrastructure:
+      - configure_prometheus_infrastructure:
           requires: 
-            - create_infrastructure
+            - create_prometheus_infrastructure
       # - smoke_test:
       #     requires: 
       #       - configure_infrastructure
