@@ -39,7 +39,7 @@ jobs:
              INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r 'flatten | select(. != null)[] | select(length > 0)' )
              echo "Instance ID: $INSTANCE_ID"
              #aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-             aws ec2 wait instance-running --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].State.Name' --output text | grep -v terminated
+             #aws ec2 wait instance-running --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].State.Name' --output text | grep -v terminated
              PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`prometheus-server`]].PublicIpAddress' --output text)
              echo "$PUBLIC_IP" >> /tmp/inventory
              echo "[prometheus-node-exporter]" > /tmp/inventory
