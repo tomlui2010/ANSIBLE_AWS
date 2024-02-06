@@ -33,7 +33,7 @@ jobs:
       - run:
           name: AWS CLI script to create inventory file
           command: |
-             echo "[prometheus_server]" > /tmp/inventory
+             echo "[prometheus_server]" > /tmp/inventory.ini
              echo "Waiting for the EC2 instance to be in the running state..."
              INSTANCE_IDS=$(aws ec2 describe-instances --query 'Reservations[*].Instances[?State.Name != `terminated`].InstanceId' --output json)
              INSTANCE_ID=$(echo $INSTANCE_IDS | jq -r 'flatten | select(. != null)[] | select(length > 0)' )
@@ -41,17 +41,19 @@ jobs:
              #aws ec2 wait instance-running --instance-ids $INSTANCE_ID
              #aws ec2 wait instance-running --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].State.Name' --output text | grep -v terminated
              PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`prometheus_server`]].PublicIpAddress' --output text)
-             echo "$PUBLIC_IP" >> /tmp/inventory
-             echo "[prometheus_node_exporter]" >> /tmp/inventory
+             echo "$PUBLIC_IP" >> /tmp/inventory.ini
+             echo "[prometheus_node_exporter]" >> /tmp/inventory.ini
              PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`prometheus_node_exporter`]].PublicIpAddress' --output text)
-             echo "$PUBLIC_IP" >> /tmp/inventory
+             echo "$PUBLIC_IP" >> /tmp/inventory.ini
       - run:
           name: Extract Public DNS
-          command: echo "PUBLIC_DNS=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --query 'Stacks[0].Outputs[?OutputKey==`NodeExporterPublicDNS`].OutputValue' --output text)" > /tmp/public_dns.env
+          command: |
+            PUBLIC_DNS=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --query 'Stacks[0].Outputs[?OutputKey==`NodeExporterPublicDNS`].OutputValue' --output text)
+            echo PUBLIC_DNS > /tmp/public_dns.env
       - persist_to_workspace:
           root: /tmp
           paths: 
-            - inventory
+            - inventory.ini
             - public_dns.env
       - destroy_environment
 
@@ -73,8 +75,8 @@ jobs:
       - run:
           name: Run Playbook and Configure server
           command: |
-             cat /tmp/inventory
-             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory main.yml -vvv --limit prometheus_server -vvv
+             cat /tmp/inventory.ini
+             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory.ini main.yml -vvv --limit prometheus_server -vvv
 
 workflows:
   app-deployment:
