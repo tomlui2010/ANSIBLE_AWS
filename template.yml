@@ -15,7 +15,7 @@ Resources:
       InstanceType: t2.micro
       Tags:
         - Key: Name
-          Value: 'prometheus-server'
+          Value: 'prometheus_server'
   EC2InstancePrometheusNodeExporter:
     Type: 'AWS::EC2::Instance'
     Properties:
@@ -26,7 +26,7 @@ Resources:
       InstanceType: t2.micro
       Tags:
         - Key: Name
-          Value: 'prometheus-node-exporter'
+          Value: 'prometheus_node_exporter'
     
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
