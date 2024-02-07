@@ -2,11 +2,13 @@
 - name: Create Prometheus user and directories
   become: true
   command: |
+    set -e
     if ! getent passwd prometheus >/dev/null; then
       useradd --system --no-create-home prometheus || true
     fi
-    mkdir  /etc/prometheus
-    mkdir  /var/lib/prometheus
+    mkdir -p  /etc/prometheus
+    mkdir -p  /var/lib/prometheus
+  ignore_errors: yes
 
 - name: Download Prometheus binary
   get_url:
