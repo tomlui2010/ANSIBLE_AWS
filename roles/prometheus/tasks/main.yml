@@ -27,6 +27,8 @@
 - name: Installing Prometheus - final step
   become: true
   command: |
+    mkdir -p /usr/local/bin
+    mkdir -p /etc/prometheus
     cp /opt/prometheus/prometheus /usr/local/bin
     cp /opt/prometheus/promtool /usr/local/bin/
     cp -r /opt/prometheus/consoles /etc/prometheus
