@@ -66,6 +66,7 @@ jobs:
 
     steps:
       - checkout
+      # You need to only provide this at one place. Either here or in the web UI ssh keys
       # - add_ssh_keys:
       #     fingerprints: ["SHA256:4tIF9h1n35rXfaRYvtiFZ0YFJ2dyDrpJi8RVNkisi5Y"]
       - attach_workspace:
