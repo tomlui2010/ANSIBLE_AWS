@@ -45,6 +45,7 @@ jobs:
              echo "[prometheus_node_exporter]" >> /tmp/inventory.ini
              PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`prometheus_node_exporter`]].PublicIpAddress' --output text)
              echo "$PUBLIC_IP" >> /tmp/inventory.ini
+             cat /tmp/inventory.ini
       - run:
           name: Extract Public DNS
           command: |
