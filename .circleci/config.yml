@@ -80,7 +80,7 @@ jobs:
           command: |
              cat /tmp/inventory.ini
              cat /tmp/public_dns.env
-             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory.ini main.yml --limit prometheus_server -u ubuntu
+             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory.ini main.yml --limit prometheus_server --vvv
 
 workflows:
   app-deployment:

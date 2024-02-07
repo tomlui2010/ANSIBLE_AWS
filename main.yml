@@ -2,7 +2,6 @@
  # Exercise for setting up a web server in an EC
  - name: Exercise for setting up a prometheus server in an EC 
    hosts: prometheus_server
-   user: ubuntu
    become: true
    become_method: sudo
    become_user: root
