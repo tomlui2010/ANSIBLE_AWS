@@ -66,9 +66,8 @@ jobs:
 
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: 
-            - "SHA256:4tIF9h1n35rXfaRYvtiFZ0YFJ2dyDrpJi8RVNkisi5Y"
+      # - add_ssh_keys:
+      #     fingerprints: ["SHA256:4tIF9h1n35rXfaRYvtiFZ0YFJ2dyDrpJi8RVNkisi5Y"]
       - attach_workspace:
           at: /tmp
       - run: 
