@@ -51,8 +51,8 @@ jobs:
           name: Extract Public DNS
           command: |
             PUBLIC_DNS=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --query 'Stacks[0].Outputs[?OutputKey==`NodeExporterPublicDNS`].OutputValue' --output text)
-            echo PUBLIC_DNS > /tmp/public_dns.env
-            cat /tmp/public_dns.env
+            echo $PUBLIC_DNS > /tmp/public_dns.env
+            #cat /tmp/public_dns.env
       - persist_to_workspace:
           root: /tmp
           paths: 
