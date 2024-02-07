@@ -31,8 +31,8 @@
     cp /opt/prometheus/promtool /usr/local/bin/
     cp -r /opt/prometheus/consoles /etc/prometheus
     cp -r /opt/prometheus/console_libraries /etc/prometheus
-    rm -rf /opt/prometheus 
-    rm -rf /tmp/prometheus.tar.gz
+    rm -rf /opt/prometheus/*
+    rm -f /tmp/prometheus.tar.gz
 
 - name: Create Prometheus data directory
   file:
