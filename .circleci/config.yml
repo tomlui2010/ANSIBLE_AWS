@@ -29,7 +29,7 @@ jobs:
       - run:
           name: Cloudformation script to create an EC2 instances
           command: |
-             cat template.yml
+             #cat template.yml
              aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
       - run:
           name: AWS CLI script to create inventory file
@@ -46,12 +46,13 @@ jobs:
              echo "[prometheus_node_exporter]" >> /tmp/inventory.ini
              PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`prometheus_node_exporter`]].PublicIpAddress' --output text)
              echo "$PUBLIC_IP" >> /tmp/inventory.ini
-             cat /tmp/inventory.ini
+             #cat /tmp/inventory.ini
       - run:
           name: Extract Public DNS
           command: |
             PUBLIC_DNS=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --query 'Stacks[0].Outputs[?OutputKey==`NodeExporterPublicDNS`].OutputValue' --output text)
             echo PUBLIC_DNS > /tmp/public_dns.env
+            cat /tmp/public_dns.env
       - persist_to_workspace:
           root: /tmp
           paths: 
@@ -78,7 +79,8 @@ jobs:
           name: Run Playbook and Configure server
           command: |
              cat /tmp/inventory.ini
-             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory.ini main.yml -vvv --limit prometheus_server -vvv
+             cat /tmp/public_dns.env
+             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory.ini main.yml --limit prometheus_server 
 
 workflows:
   app-deployment:
