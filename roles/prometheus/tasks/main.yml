@@ -41,6 +41,7 @@
     - /var/lib/prometheus
 
 - name: Copy Prometheus binaries
+  become: true
   ansible.builtin.copy:
     src: "/opt/prometheus/{{ item }}"
     dest: /usr/local/bin/
@@ -50,6 +51,7 @@
  
 
 - name: Copy Prometheus configuration
+  become: true
   ansible.builtin.copy:
     src: "/opt/prometheus/{{ item }}"
     dest: /etc/prometheus/
@@ -58,11 +60,13 @@
     - console_libraries
 
 - name: Remove Prometheus directory
+  become: true
   ansible.builtin.file:
     path: /opt/prometheus
     state: absent
 
 - name: Remove Prometheus tar file
+  become: true
   ansible.builtin.file:
     path: /tmp/prometheus.tar.gz
     state: absent
@@ -84,6 +88,7 @@
     mode: 755
 
 - name: Copy Prometheus configuration
+  become: true
   ansible.builtin.template:
     src: prometheus.yml.j2
     dest: "/opt/prometheus/prometheus.yml"
@@ -91,16 +96,19 @@
     prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
 
 - name: Copy systemd service file
+  become: true
   ansible.builtin.template:
     src: prometheus.service.j2
     dest: "/etc/systemd/system/prometheus.service"
 
 - name: Reload systemd
+  become: true
   ansible.builtin.systemd:
     daemon_reload: yes
     state: reloaded
 
 - name: Ensure prometheus is running and enabled
+  become: true
   ansible.builtin.systemd:
     name: prometheus
     state: started
