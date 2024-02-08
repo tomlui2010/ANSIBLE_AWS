@@ -57,6 +57,7 @@
   ansible.builtin.copy:
     src: "/opt/prometheus/{{ item }}"
     dest: /usr/local/bin/
+    remote_src: true
   loop:
     - prometheus
     - promtool
@@ -67,6 +68,7 @@
   ansible.builtin.copy:
     src: "/opt/prometheus/{{ item }}"
     dest: /etc/prometheus/
+    remote_src: true
   loop:
     - consoles
     - console_libraries
