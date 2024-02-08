@@ -6,9 +6,8 @@
     if ! getent passwd prometheus >/dev/null; then
       useradd --system --no-create-home prometheus || true
     fi
-    mkdir -p  /etc/prometheus
-    mkdir -p  /var/lib/prometheus
-  ignore_errors: true
+    mkdir -p /etc/prometheus
+    mkdir -p /var/lib/prometheus
 
 - name: Download Prometheus binary
   get_url:
@@ -22,13 +21,14 @@
     remote_src: yes
 
 - name: Rename Prometheus directory
-  command: mv "/opt/prometheus-2.49.1.linux-amd64" "/opt/prometheus"
+  ansible.builtin.command:
+    cmd: mv "/opt/prometheus-2.49.1.linux-amd64" "/opt/prometheus"
 
 - name: Installing Prometheus - final step
   become: true
-  tasks:
+  block:
     - name: Create directories for Prometheus binaries and configuration
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
       loop:
@@ -37,7 +37,7 @@
         - /var/lib/prometheus
 
     - name: Copy Prometheus binaries
-      copy:
+      ansible.builtin.copy:
         src: "/opt/prometheus/{{ item }}"
         dest: "{{ item }}"
       loop:
@@ -46,7 +46,7 @@
       dest: /usr/local/bin/
 
     - name: Copy Prometheus configuration
-      copy:
+      ansible.builtin.copy:
         src: "/opt/prometheus/{{ item }}"
         dest: "{{ item }}"
       loop:
@@ -55,16 +55,14 @@
       dest: /etc/prometheus/
 
     - name: Remove Prometheus directory
-      file:
+      ansible.builtin.file:
         path: /opt/prometheus
         state: absent
 
     - name: Remove Prometheus tar file
-      file:
+      ansible.builtin.file:
         path: /tmp/prometheus.tar.gz
         state: absent
-
-
 
 - name: Set permissions for Prometheus 
   become: true
@@ -77,30 +75,30 @@
     chown -R prometheus:prometheus /var/lib/prometheus
 
 - name: Set permissions for Prometheus binary
-  file:
+  ansible.builtin.file:
     path: "/opt/prometheus/prometheus"
     state: file
     mode: 755
 
 - name: Copy Prometheus configuration
-  template:
+  ansible.builtin.template:
     src: prometheus.yml.j2
     dest: "/opt/prometheus/prometheus.yml"
   vars: 
     prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
 
 - name: Copy systemd service file
-  template:
+  ansible.builtin.template:
     src: prometheus.service.j2
     dest: "/etc/systemd/system/prometheus.service"
 
 - name: Reload systemd
-  systemd:
+  ansible.builtin.systemd:
     daemon_reload: yes
     state: reloaded
 
 - name: Ensure prometheus is running and enabled
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus
     state: started
     enabled: yes
