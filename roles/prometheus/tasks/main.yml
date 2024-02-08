@@ -43,20 +43,19 @@
 - name: Copy Prometheus binaries
   ansible.builtin.copy:
     src: "/opt/prometheus/{{ item }}"
-    dest: "{{ item }}"
+    dest: /usr/local/bin/
   loop:
     - prometheus
     - promtool
-  dest: /usr/local/bin/
+ 
 
 - name: Copy Prometheus configuration
   ansible.builtin.copy:
     src: "/opt/prometheus/{{ item }}"
-    dest: "{{ item }}"
+    dest: /etc/prometheus/
   loop:
     - consoles
     - console_libraries
-  dest: /etc/prometheus/
 
 - name: Remove Prometheus directory
   ansible.builtin.file:
