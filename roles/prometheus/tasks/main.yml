@@ -87,13 +87,18 @@
 
 - name: Set permissions for Prometheus 
   become: true
-  command: |
-    chown prometheus:prometheus /etc/prometheus
-    chown prometheus:prometheus /usr/local/bin/prometheus
-    chown prometheus:prometheus /usr/local/bin/promtool
-    chown -R prometheus:prometheus /etc/prometheus/consoles
-    chown -R prometheus:prometheus /etc/prometheus/console_libraries
-    chown -R prometheus:prometheus /var/lib/prometheus
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+  loop:
+    - { path: /etc/prometheus }
+    - { path: /usr/local/bin/prometheus }
+    - { path: /usr/local/bin/promtool }
+    - { path: /etc/prometheus/consoles }
+    - { path: /etc/prometheus/console_libraries }
+    - { path: /var/lib/prometheus }
 
 
 
