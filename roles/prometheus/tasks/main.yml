@@ -40,6 +40,18 @@
     - /etc/prometheus
     - /var/lib/prometheus
 
+- name: Set permissions for Prometheus binary
+  ansible.builtin.file:
+    path: "/opt/prometheus/prometheus"
+    state: file
+    mode: 755
+
+- name: Set permissions for Prometheus binary
+  ansible.builtin.file:
+    path: "/opt/prometheus/promtool"
+    state: file
+    mode: 755
+
 - name: Copy Prometheus binaries
   become: true
   ansible.builtin.copy:
@@ -81,11 +93,7 @@
     chown -R prometheus:prometheus /etc/prometheus/console_libraries
     chown -R prometheus:prometheus /var/lib/prometheus
 
-- name: Set permissions for Prometheus binary
-  ansible.builtin.file:
-    path: "/opt/prometheus/prometheus"
-    state: file
-    mode: 755
+
 
 - name: Copy Prometheus configuration
   become: true
