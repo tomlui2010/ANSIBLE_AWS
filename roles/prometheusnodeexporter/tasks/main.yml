@@ -1,0 +1,135 @@
+---
+- name: Create node_exporter user and directories
+  become: true
+  block:
+    - name: Create node_exporter user if not exists
+      ansible.builtin.command:
+        cmd: useradd --system --no-create-home node_exporter
+        creates: /etc/prometheus
+      ignore_errors: true
+
+    # - name: Create Prometheus directories
+    #   ansible.builtin.file:
+    #     path: "{{ item }}"
+    #     state: directory
+    #   loop:
+    #     - /etc/prometheus
+    #     - /var/lib/prometheus
+
+- name: Download Node Exporter binaries
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz"
+    dest: "/tmp/node_exporter.tar.gz"
+
+- name: Extract node_exporter binary
+  ansible.builtin.unarchive:
+    src: "/tmp/node_exporter.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+
+- name: Rename node_exporter directory
+  ansible.builtin.command:
+    cmd: mv "/opt/node_exporter-1.7.0.linux-amd64" "/opt/node_exporter"
+
+- name: Create directories for Prometheus binaries and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /usr/local/bin/node_exporter
+
+# - name: Set permissions for Prometheus binary
+#   ansible.builtin.file:
+#     path: "/opt/prometheus/prometheus"
+#     state: file
+#     mode: 755
+
+# - name: Set permissions for Prometheus binary
+#   ansible.builtin.file:
+#     path: "/opt/prometheus/promtool"
+#     state: file
+#     mode: 755
+
+- name: Copy Node Exporter binaries
+  become: true
+  ansible.builtin.copy:
+    src: "/opt/node_exporter/{{ item }}"
+    dest: /usr/local/bin/node_exporter
+    remote_src: true
+  loop:
+    - node_exporter
+ 
+
+# - name: Copy Prometheus configuration
+#   become: true
+#   ansible.builtin.copy:
+#     src: "/opt/prometheus/{{ item }}"
+#     dest: /etc/prometheus/
+#     remote_src: true
+#   loop:
+#     - consoles
+#     - console_libraries
+
+- name: Remove Node Exporter tar file
+  become: true
+  ansible.builtin.file:
+    path: /tmp/node_exporter.tar.gz
+    state: absent
+
+# - name: Set permissions for Prometheus 
+#   become: true
+#   ansible.builtin.file:
+#     path: "{{ item.path }}"
+#     owner: prometheus
+#     group: prometheus
+#     recurse: yes
+#   loop:
+#     - { path: /etc/prometheus }
+#     - { path: /etc/prometheus/consoles }
+#     - { path: /etc/prometheus/console_libraries }
+#     - { path: /var/lib/prometheus }
+
+# - name: Set permissions for Prometheus binaries
+#   become: true
+#   ansible.builtin.file:
+#     path: "{{ item.path }}"
+#     owner: prometheus
+#     group: prometheus
+#   loop:
+#     - { path: /usr/local/bin/prometheus }
+#     - { path: /usr/local/bin/promtool }
+
+
+# - name: Copy Prometheus configuration
+#   become: true
+#   ansible.builtin.template:
+#     src: prometheus.yml.j2
+#     dest: "/opt/prometheus/prometheus.yml"
+#   vars: 
+#     prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
+
+- name: Copy systemd service file
+  become: true
+  ansible.builtin.template:
+    src: node-exporter.service.j2
+    dest: "/etc/systemd/system/node-exporter.service"
+
+# - name: Remove node-exporter directory
+#   become: true
+#   ansible.builtin.file:
+#     path: /opt/prometheus
+#     state: absent
+
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    name: node-exporter
+    daemon_reload: yes
+    state: reloaded
+
+- name: Ensure node-exporter is running and enabled
+  become: true
+  ansible.builtin.systemd:
+    name: node-exporter
+    state: started
+    enabled: yes
