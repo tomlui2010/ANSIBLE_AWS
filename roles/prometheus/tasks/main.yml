@@ -122,10 +122,11 @@
   ansible.builtin.file:
     path: /opt/prometheus
     state: absent
-    
+
 - name: Reload systemd
   become: true
   ansible.builtin.systemd:
+    name: prometheus
     daemon_reload: yes
     state: reloaded
 
