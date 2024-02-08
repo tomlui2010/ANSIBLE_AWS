@@ -94,12 +94,19 @@
     recurse: yes
   loop:
     - { path: /etc/prometheus }
-    - { path: /usr/local/bin/prometheus }
-    - { path: /usr/local/bin/promtool }
     - { path: /etc/prometheus/consoles }
     - { path: /etc/prometheus/console_libraries }
     - { path: /var/lib/prometheus }
 
+- name: Set permissions for Prometheus binaries
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: prometheus
+    group: prometheus
+  loop:
+    - { path: /usr/local/bin/prometheus }
+    - { path: /usr/local/bin/promtool }
 
 
 - name: Copy Prometheus configuration
