@@ -1,13 +1,20 @@
 ---
 - name: Create Prometheus user and directories
   become: true
-  command: |
-    set -e
-    if ! getent passwd prometheus >/dev/null; then
-      useradd --system --no-create-home prometheus || true
-    fi
-    mkdir -p /etc/prometheus
-    mkdir -p /var/lib/prometheus
+  block:
+    - name: Create Prometheus user if not exists
+      ansible.builtin.command:
+        cmd: useradd --system --no-create-home prometheus
+        creates: /etc/prometheus
+      ignore_errors: true
+
+    - name: Create Prometheus directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /etc/prometheus
+        - /var/lib/prometheus
 
 - name: Download Prometheus binary
   get_url:
@@ -24,45 +31,42 @@
   ansible.builtin.command:
     cmd: mv "/opt/prometheus-2.49.1.linux-amd64" "/opt/prometheus"
 
-- name: Installing Prometheus - final step
-  become: true
-  block:
-    - name: Create directories for Prometheus binaries and configuration
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-      loop:
-        - /usr/local/bin
-        - /etc/prometheus
-        - /var/lib/prometheus
+- name: Create directories for Prometheus binaries and configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /usr/local/bin
+    - /etc/prometheus
+    - /var/lib/prometheus
 
-    - name: Copy Prometheus binaries
-      ansible.builtin.copy:
-        src: "/opt/prometheus/{{ item }}"
-        dest: "{{ item }}"
-      loop:
-        - prometheus
-        - promtool
-      dest: /usr/local/bin/
+- name: Copy Prometheus binaries
+  ansible.builtin.copy:
+    src: "/opt/prometheus/{{ item }}"
+    dest: "{{ item }}"
+  loop:
+    - prometheus
+    - promtool
+  dest: /usr/local/bin/
 
-    - name: Copy Prometheus configuration
-      ansible.builtin.copy:
-        src: "/opt/prometheus/{{ item }}"
-        dest: "{{ item }}"
-      loop:
-        - consoles
-        - console_libraries
-      dest: /etc/prometheus/
+- name: Copy Prometheus configuration
+  ansible.builtin.copy:
+    src: "/opt/prometheus/{{ item }}"
+    dest: "{{ item }}"
+  loop:
+    - consoles
+    - console_libraries
+  dest: /etc/prometheus/
 
-    - name: Remove Prometheus directory
-      ansible.builtin.file:
-        path: /opt/prometheus
-        state: absent
+- name: Remove Prometheus directory
+  ansible.builtin.file:
+    path: /opt/prometheus
+    state: absent
 
-    - name: Remove Prometheus tar file
-      ansible.builtin.file:
-        path: /tmp/prometheus.tar.gz
-        state: absent
+- name: Remove Prometheus tar file
+  ansible.builtin.file:
+    path: /tmp/prometheus.tar.gz
+    state: absent
 
 - name: Set permissions for Prometheus 
   become: true
