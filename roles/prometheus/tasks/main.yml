@@ -114,7 +114,6 @@
   ansible.builtin.template:
     src: prometheus.yml.j2
     dest: "/opt/prometheus/prometheus.yml"
-    remote_src: true
   vars: 
     prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
 
