@@ -26,20 +26,45 @@
 
 - name: Installing Prometheus - final step
   become: true
-  command: |-
-    mkdir -p /usr/local/bin
-    mkdir -p /etc/prometheus
-    cp /opt/prometheus/prometheus /usr/local/bin
-    cp /opt/prometheus/promtool /usr/local/bin/
-    cp -r /opt/prometheus/consoles /etc/prometheus
-    cp -r /opt/prometheus/console_libraries /etc/prometheus
-    rm -rf /opt/prometheus/*
-    rm -f /tmp/prometheus.tar.gz
+  tasks:
+    - name: Create directories for Prometheus binaries and configuration
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /usr/local/bin
+        - /etc/prometheus
+        - /var/lib/prometheus
 
-- name: Create Prometheus data directory
-  file:
-    path: "/var/lib/prometheus"
-    state: directory
+    - name: Copy Prometheus binaries
+      copy:
+        src: "/opt/prometheus/{{ item }}"
+        dest: "{{ item }}"
+      loop:
+        - prometheus
+        - promtool
+      dest: /usr/local/bin/
+
+    - name: Copy Prometheus configuration
+      copy:
+        src: "/opt/prometheus/{{ item }}"
+        dest: "{{ item }}"
+      loop:
+        - consoles
+        - console_libraries
+      dest: /etc/prometheus/
+
+    - name: Remove Prometheus directory
+      file:
+        path: /opt/prometheus
+        state: absent
+
+    - name: Remove Prometheus tar file
+      file:
+        path: /tmp/prometheus.tar.gz
+        state: absent
+
+
 
 - name: Set permissions for Prometheus 
   become: true
