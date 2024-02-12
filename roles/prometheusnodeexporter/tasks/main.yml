@@ -5,7 +5,7 @@
     - name: Create node_exporter user if not exists
       ansible.builtin.command:
         cmd: useradd --system --no-create-home node_exporter
-        creates: /etc/prometheus
+        creates: /etc/node_exporter
       ignore_errors: true
 
     # - name: Create Prometheus directories

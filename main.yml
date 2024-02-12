@@ -1,6 +1,15 @@
 ---
  # Exercise for setting up a web server in an EC
- - name: Exercise for setting up a prometheus server in an EC 
+ - name: Exercise for setting up a prometheus server in an EC2
+   hosts: prometheus_server
+   become: true
+   become_method: sudo
+   become_user: root
+   roles:
+    - common
+    - prometheus
+
+ - name: Exercise for setting up a node exporter server in an EC2
    hosts: prometheus_server
    become: true
    become_method: sudo
