@@ -98,6 +98,7 @@
     path: "{{ item.path }}"
     owner: prometheus
     group: prometheus
+    mode: 755
   loop:
     - { path: /usr/local/bin/prometheus }
     - { path: /usr/local/bin/promtool }
@@ -107,7 +108,7 @@
   become: true
   ansible.builtin.template:
     src: prometheus.yml.j2
-    dest: "/opt/prometheus/prometheus.yml"
+    dest: "/etc/prometheus/prometheus.yml"
   vars: 
     prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
 
