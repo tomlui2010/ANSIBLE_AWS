@@ -39,11 +39,6 @@
   loop:
     - /usr/local/bin/node_exporter
 
-# - name: Set permissions for Prometheus binary
-#   ansible.builtin.file:
-#     path: "/opt/prometheus/prometheus"
-#     state: file
-#     mode: 755
 
 # - name: Set permissions for Prometheus binary
 #   ansible.builtin.file:
@@ -60,7 +55,12 @@
   loop:
     - node_exporter
  
-
+- name: Set permissions for node exporter binary
+  ansible.builtin.file:
+    path: "/usr/local/bin/node_exporter/node_exporter"
+    state: file
+    mode: 755
+    
 # - name: Copy Prometheus configuration
 #   become: true
 #   ansible.builtin.copy:
