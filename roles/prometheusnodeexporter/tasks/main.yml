@@ -35,6 +35,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
+    mode: 755
   loop:
     - /usr/local/bin/node_exporter
 
