@@ -110,7 +110,8 @@
     src: prometheus.yml.j2
     dest: "/etc/prometheus/prometheus.yml"
   vars: 
-    prometheus_target: "{{ lookup('file', '/tmp/public_dns.env') }}"
+    aws_access_key_id: ${{ aws_access_key_id }}
+    aws_secret_access_key: ${{ aws_secret_access_key }}
 
 - name: Copy systemd service file
   become: true

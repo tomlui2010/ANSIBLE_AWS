@@ -99,4 +99,3 @@ workflows:
       - configure_prometheus_infrastructure:
           requires: 
             - create_prometheus_infrastructure
-          context: ansible-aws
