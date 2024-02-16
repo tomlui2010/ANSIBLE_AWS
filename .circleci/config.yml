@@ -61,6 +61,9 @@ jobs:
       - destroy_environment
 
   configure_prometheus_infrastructure:
+    environment:
+        AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+        AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     docker:
       - image: python:3.7-alpine3.11
 
@@ -79,13 +82,13 @@ jobs:
       - run:
           name: Run Playbook and Configure Prometheus 
           command: |
-             cat /tmp/inventory.ini
-             cat /tmp/public_dns.env
-             ansible-playbook -e "PUBLIC_DNS=$(cat /tmp/public_dns.env)" -i /tmp/inventory.ini main.yml --limit prometheus_server 
+            #  cat /tmp/inventory.ini
+            #  cat /tmp/public_dns.env
+             ansible-playbook --extra-vars "aws_access_key_id=${AWS_ACCESS_KEY_ID} aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}" -i /tmp/inventory.ini main.yml --limit prometheus_server 
       - run:
           name: Run Playbook and Configure Node Exporter
           command: |
-             cat /tmp/inventory.ini
+            #  cat /tmp/inventory.ini
              ansible-playbook -i /tmp/inventory.ini main.yml --limit prometheus_node_exporter -vvv
 
 workflows:
@@ -96,3 +99,4 @@ workflows:
       - configure_prometheus_infrastructure:
           requires: 
             - create_prometheus_infrastructure
+          context: ansible-aws
