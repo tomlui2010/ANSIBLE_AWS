@@ -110,7 +110,7 @@
     src: prometheus.yml.j2
     dest: "/etc/prometheus/prometheus.yml"
   vars: 
-    prometheus_target: "{{ lookup('env', 'PUBLIC_DNS') }}"
+    prometheus_target: "{{ lookup('file', '/tmp/public_dns.env') }}"
 
 - name: Copy systemd service file
   become: true
