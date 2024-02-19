@@ -85,9 +85,9 @@ jobs:
             #  cat /tmp/inventory.ini
             #  cat /tmp/public_dns.env
             echo "access key"
-            ${AWS_ACCESS_KEY_ID}
+            echo ${AWS_ACCESS_KEY_ID}
             echo "secret key"
-            ${AWS_SECRET_ACCESS_KEY}
+            echo ${AWS_SECRET_ACCESS_KEY}
             ansible-playbook --extra-vars "aws_access_key_id=${AWS_ACCESS_KEY_ID} aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}" -i /tmp/inventory.ini main.yml --limit prometheus_server -vvv
       - run:
           name: Run Playbook and Configure Node Exporter
