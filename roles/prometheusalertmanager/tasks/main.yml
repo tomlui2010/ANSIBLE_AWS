@@ -51,9 +51,8 @@
   ansible.builtin.template:
     src: alertmanager.yml.j2
     dest: "/etc/prometheus/alertmanager.yml"
-  # vars: 
-  #   aws_access_key_id: ${{ aws_access_key_id }}
-  #   aws_secret_access_key: ${{ aws_secret_access_key }}
+  vars: 
+    smtp_host: "{{ inventory_hostname }}"
 
 - name: Copy systemd service file
   become: true
@@ -74,7 +73,7 @@
     daemon_reload: yes
     state: reloaded
 
-- name: Ensure prometheus is running and enabled
+- name: Ensure alertmanager is running and enabled
   become: true
   ansible.builtin.systemd:
     name: alertmanager

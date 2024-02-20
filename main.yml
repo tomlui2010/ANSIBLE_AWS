@@ -8,7 +8,6 @@
    roles:
     - common
     - prometheus
-    - prometheusalertmanager
 
  - name: Exercise for setting up a node exporter server in an EC2
    hosts: prometheus_node_exporter
@@ -18,3 +17,4 @@
    roles:
     - common
     - prometheusnodeexporter
+    - prometheusalertmanager

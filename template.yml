@@ -49,14 +49,6 @@ Resources:
           FromPort: '9093'
           ToPort: '9093'
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '1025'
-          ToPort: '1025'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8025'
-          ToPort: '8025'
-          CidrIp: 0.0.0.0/0
 
   InstanceSecurityGroupNodeExporter:
     Type: 'AWS::EC2::SecurityGroup'
@@ -74,6 +66,14 @@ Resources:
         - IpProtocol: tcp
           FromPort: '9100'
           ToPort: '9100'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '1025'
+          ToPort: '1025'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '8025'
+          ToPort: '8025'
           CidrIp: 0.0.0.0/0
 
 Outputs:

@@ -134,3 +134,26 @@
     name: node-exporter
     state: started
     enabled: yes
+
+- name: Install Docker
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - docker.io   # Docker package name on Ubuntu
+
+- name: Pull MailHog Docker image
+  ansible.builtin.docker_image:
+    name: mailhog/mailhog
+    source: pull
+
+- name: Run MailHog container
+  ansible.builtin.docker_container:
+    name: mailhog
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # HTTP web interface port
+    state: started
+
