@@ -1,0 +1,2 @@
+# vars.yml
+prometheus_target: "your_dynamic_target_here"

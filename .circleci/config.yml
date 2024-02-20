@@ -43,6 +43,7 @@ jobs:
              #aws ec2 wait instance-running --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].State.Name' --output text | grep -v terminated
              PUBLIC_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[?State.Name != `terminated` && Tags[?Key==`Name` && Value==`prometheus_server`]][PublicIpAddress]' --output text)
              echo "$PUBLIC_IP" >> /tmp/inventory.ini
+             export prometheus_server_public_ip=$PUBLIC_IP
              echo "[prometheus_node_exporter]" >> /tmp/inventory.ini
              PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[?Tags[?Key==`Name` && Value==`prometheus_node_exporter`]].PublicIpAddress' --output text)
              echo "$PUBLIC_IP" >> /tmp/inventory.ini
@@ -58,6 +59,20 @@ jobs:
           paths: 
             - inventory.ini
             - public_dns.env
+      # Deploy MailHog Docker container on EC2 instance
+      - run:
+          name: Deploy MailHog container
+          command: |
+            # Pull MailHog image
+            docker pull mailhog/mailhog
+
+            # Run MailHog container
+            docker run -d --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog
+            # Adjust security group settings if needed to allow inbound traffic on port 1025 and 8025
+            # Replace 'YOUR_EC2_INSTANCE_IP' with the public IP of your EC2 instance
+            aws ec2 authorize-security-group-ingress --group-name default --protocol tcp --port 1025 --cidr $prometheus_server_public_ip/32
+            aws ec2 authorize-security-group-ingress --group-name default --protocol tcp --port 8025 --cidr $prometheus_server_public_ip/32
+            
       - destroy_environment
 
   configure_prometheus_infrastructure:
@@ -90,6 +105,11 @@ jobs:
           command: |
             #  cat /tmp/inventory.ini
              ansible-playbook -i /tmp/inventory.ini main.yml --limit prometheus_node_exporter 
+      - run:
+          name: Run Playbook and Configure Alert manager
+          command: |
+            #  cat /tmp/inventory.ini
+             ansible-playbook -i /tmp/inventory.ini main.yml --limit prometheus_server
 
 workflows:
   app-deployment:

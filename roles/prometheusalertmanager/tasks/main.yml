@@ -1,0 +1,82 @@
+
+
+- name: Download Prometheus binary
+  get_url:
+    url: "https://github.com/prometheus/alertmanager/releases/download/v0.26.0/alertmanager-0.26.0.linux-amd64.tar.gz"
+    dest: "/tmp"
+
+- name: Extract Prometheus binary
+  ansible.builtin.unarchive:
+    src: "/tmp/alertmanager-0.26.0.linux-amd64.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+
+# - name: Set permissions for Prometheus binary
+#   ansible.builtin.file:
+#     path: "/opt/prometheus/prometheus"
+#     state: file
+#     mode: 755
+
+# - name: Set permissions for Prometheus binary
+#   ansible.builtin.file:
+#     path: "/opt/prometheus/promtool"
+#     state: file
+#     mode: 755
+
+- name: Copy Alertmanager binaries
+  become: true
+  ansible.builtin.copy:
+    src: "/opt/alertmanager-0.26.0.linux-amd64/{{ item }}"
+    dest: /usr/local/bin/
+    remote_src: true
+  loop:
+    - alertmanager
+    - amtool
+ 
+
+- name: Set permissions for Prometheus binaries
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: prometheus
+    group: prometheus
+    mode: 755
+  loop:
+    - { path: /usr/local/bin/alertmanager }
+    - { path: /usr/local/bin/amtool }
+
+
+- name: Copy Alertmanager configuration
+  become: true
+  ansible.builtin.template:
+    src: alertmanager.yml.j2
+    dest: "/etc/prometheus/alertmanager.yml"
+  # vars: 
+  #   aws_access_key_id: ${{ aws_access_key_id }}
+  #   aws_secret_access_key: ${{ aws_secret_access_key }}
+
+- name: Copy systemd service file
+  become: true
+  ansible.builtin.template:
+    src: alertmanager.service.j2
+    dest: "/etc/systemd/system/alertmanager.service"
+
+# - name: Remove Prometheus directory
+#   become: true
+#   ansible.builtin.file:
+#     path: /opt/prometheus
+#     state: absent
+
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    name: alertmanager
+    daemon_reload: yes
+    state: reloaded
+
+- name: Ensure prometheus is running and enabled
+  become: true
+  ansible.builtin.systemd:
+    name: alertmanager
+    state: started
+    enabled: yes
