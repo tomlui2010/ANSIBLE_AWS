@@ -9,7 +9,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SecurityGroups:
-        - !Ref InstanceSecurityGroup
+        - !Ref InstanceSecurityGroupPrometheusServer
       KeyName: !Ref SecurityKeyPair
       ImageId: 'ami-008fe2fc65df48dac' 
       InstanceType: t2.micro
@@ -20,7 +20,7 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       SecurityGroups:
-        - !Ref InstanceSecurityGroup
+        - !Ref InstanceSecurityGroupNodeExporter
       KeyName: !Ref SecurityKeyPair
       ImageId: 'ami-008fe2fc65df48dac' 
       InstanceType: t2.micro
@@ -28,7 +28,7 @@ Resources:
         - Key: Name
           Value: 'prometheus_node_exporter'
     
-  InstanceSecurityGroup:
+  InstanceSecurityGroupPrometheusServer:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Opening ports 9090, 9093, 9100 and SSH
@@ -49,6 +49,33 @@ Resources:
           FromPort: '9093'
           ToPort: '9093'
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '1025'
+          ToPort: '1025'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '8025'
+          ToPort: '8025'
+          CidrIp: 0.0.0.0/0
+
+  InstanceSecurityGroupNodeExporter:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Opening ports 9090, 9093, 9100 and SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '9090'
+          ToPort: '9090'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '9100'
+          ToPort: '9100'
+          CidrIp: 0.0.0.0/0
+
 Outputs:
   NodeExporterPublicDNS:
     Value: !GetAtt EC2InstancePrometheusNodeExporter.PublicDnsName
