@@ -137,11 +137,10 @@
 
 - name: Install Docker
   become: true
-  apt:
-    name: "{{ item }}"
+  pip:
+    name: docker
     state: present
-  loop:
-    - docker.io   # Docker package name on Ubuntu
+    executable: pip3
 
 - name: Pull MailHog Docker image
   ansible.builtin.docker_image:
