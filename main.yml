@@ -16,5 +16,6 @@
    become_user: root
    roles:
     - common
+    - installdocker
     - prometheusnodeexporter
     - prometheusalertmanager

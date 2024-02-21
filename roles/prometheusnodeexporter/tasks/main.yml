@@ -135,23 +135,6 @@
     state: started
     enabled: yes
 
-- name: Add Docker repository
-  apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
-    state: present
-    filename: docker
-    update_cache: yes
-    become: yes
-
-- name: Install Docker package
-  apt:
-    name: docker-ce
-    state: present
-
-- name: Start Docker service
-  service:
-    name: docker
-    state: started
 
 - name: Pull Mailhog Docker image
   docker_image:
