@@ -135,29 +135,33 @@
     state: started
     enabled: yes
 
-- name: Install Docker
-  become: true
-  package:
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+    filename: docker
+
+- name: Install Docker package
+  apt:
     name: docker-ce
     state: present
 
-- name: Start Docker daemon
+- name: Start Docker service
   service:
     name: docker
     state: started
-    enabled: yes
 
-- name: Pull MailHog Docker image
-  ansible.builtin.docker_container:
+- name: Pull Mailhog Docker image
+  docker_image:
     name: mailhog/mailhog
-    source: pull
+    state: present
 
-- name: Run MailHog container
-  ansible.builtin.docker_container:
+- name: Create Mailhog container
+  docker_container:
     name: mailhog
     image: mailhog/mailhog
     ports:
-      - "1025:1025"  # SMTP port
-      - "8025:8025"  # HTTP web interface port
+      - "1025:1025"
+      - "8025:8025"
     state: started
 
