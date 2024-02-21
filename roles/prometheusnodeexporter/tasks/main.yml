@@ -148,7 +148,7 @@
     enabled: yes
 
 - name: Pull MailHog Docker image
-  community.docker.docker_image:
+  ansible.builtin.docker_container:
     name: mailhog/mailhog
     source: pull
 
