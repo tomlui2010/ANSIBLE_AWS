@@ -137,13 +137,18 @@
 
 - name: Install Docker
   become: true
-  pip:
-    name: docker
+  package:
+    name: docker-ce
     state: present
-    executable: pip3
+
+- name: Start Docker daemon
+  service:
+    name: docker
+    state: started
+    enabled: yes
 
 - name: Pull MailHog Docker image
-  ansible.builtin.docker_image:
+  community.docker.docker_image:
     name: mailhog/mailhog
     source: pull
 
