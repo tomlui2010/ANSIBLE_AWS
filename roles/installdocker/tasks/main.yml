@@ -30,7 +30,7 @@
 - name: Install Docker
   apt:
     name: "{{ docker_package }}"
-    state: "{{ docker_state }}"
+    state: present
   vars:
     docker_package: "docker-ce docker-ce-cli containerd.io"
 
