@@ -6,7 +6,7 @@
 - name: Install required packages
   apt:
     name: "{{ packages }}"
-    state: "{{ docker_state }}"
+    state: present
   vars:
     packages:
       - apt-transport-https
