@@ -138,3 +138,19 @@
     name: prometheus
     state: started
     enabled: yes
+
+
+
+- name: Pull Mailhog Docker image
+  docker_image:
+    name: mailhog/mailhog
+    state: present
+
+- name: Create Mailhog container
+  docker_container:
+    name: mailhog
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    state: started
