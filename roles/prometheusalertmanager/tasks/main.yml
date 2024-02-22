@@ -62,7 +62,7 @@
   become: true
   ansible.builtin.file:
     path: /var/lib/alertmanager
-    state: present
+    state: directory
 
 - name: Reload systemd
   become: true
