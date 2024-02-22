@@ -46,4 +46,4 @@
 - name: Reload Docker daemon (if changes made)
   systemd:
     name: docker
-    daemon_reload: "{{ docker_daemon_reload }}"
+    daemon_reload: True

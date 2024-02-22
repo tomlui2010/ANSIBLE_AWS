@@ -1,2 +1,1 @@
 docker_version: "{{ docker_version | default('latest') }}"
-docker_daemon_reload: "{{ docker_daemon_reload | default(True) }}"
