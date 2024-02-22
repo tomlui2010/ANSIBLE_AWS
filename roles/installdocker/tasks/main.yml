@@ -32,7 +32,10 @@
     name: "{{ docker_package }}"
     state: present
   vars:
-    docker_package: "docker-ce docker-ce-cli containerd.io"
+    docker_package: 
+       - "docker-ce"
+       - "docker-ce-cli"
+       - "containerd.io"
 
 - name: Start and enable Docker service
   systemd:
