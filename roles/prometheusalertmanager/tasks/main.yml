@@ -34,12 +34,10 @@
     - amtool
  
 
-- name: Set permissions for Prometheus binaries
+- name: Set permissions for alertmanager binaries
   become: true
   ansible.builtin.file:
     path: "{{ item.path }}"
-    owner: prometheus
-    group: prometheus
     mode: 755
   loop:
     - { path: /usr/local/bin/alertmanager }
