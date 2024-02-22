@@ -9,3 +9,6 @@ groups:
         annotations:
           summary: "Instance  is down"
           description: " of job  has been down for more than 3 minutes."
+
+
+/usr/local/bin/alertmanager --config.file /etc/prometheus/alertmanager.yml --storage.path /var/lib/alertmanager
