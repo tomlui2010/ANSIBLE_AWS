@@ -9,6 +9,7 @@
     - common
     - installdocker
     - prometheus
+    - prometheusalertmanager
 
 
  - name: Exercise for setting up a node exporter server in an EC2
@@ -19,4 +20,3 @@
    roles:
     - common
     - prometheusnodeexporter
-    - prometheusalertmanager
