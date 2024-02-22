@@ -58,11 +58,11 @@
     src: alertmanager.service.j2
     dest: "/etc/systemd/system/alertmanager.service"
 
-# - name: Remove Prometheus directory
-#   become: true
-#   ansible.builtin.file:
-#     path: /opt/prometheus
-#     state: absent
+- name: add alertmanager directory
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/alertmanager
+    state: present
 
 - name: Reload systemd
   become: true
