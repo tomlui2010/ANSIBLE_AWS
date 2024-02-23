@@ -31,7 +31,7 @@ Resources:
   InstanceSecurityGroupPrometheusServer:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Opening ports 9090, 9093, 9100 and SSH
+      GroupDescription: Opening ports 9090, 9093, 9100 and SSH, 8025 and 1025
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '9090'
@@ -49,11 +49,19 @@ Resources:
           FromPort: '9093'
           ToPort: '9093'
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '1025'
+          ToPort: '1025'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '8025'
+          ToPort: '8025'
+          CidrIp: 0.0.0.0/0
 
   InstanceSecurityGroupNodeExporter:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Opening ports 9090, 9093, 9100 and SSH
+      GroupDescription: Opening ports 9090, 9100 and SSH
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '9090'
@@ -67,14 +75,7 @@ Resources:
           FromPort: '9100'
           ToPort: '9100'
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '1025'
-          ToPort: '1025'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8025'
-          ToPort: '8025'
-          CidrIp: 0.0.0.0/0
+
 
 Outputs:
   NodeExporterPublicDNS:
