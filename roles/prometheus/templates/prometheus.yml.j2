@@ -11,7 +11,7 @@ alerting:
   alertmanagers:
     - static_configs:
       - targets: 
-        - {{ alertmanagerhost }}:9093
+        - '{{ alertmanagerhost }}:9093'
         
 scrape_configs:
   - job_name: 'node'

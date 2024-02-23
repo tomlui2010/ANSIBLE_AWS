@@ -1,4 +1,11 @@
-
+- name: Create alertmanager user
+  become: true
+  block:
+    - name: Create alertmanager user if not exists
+      ansible.builtin.command:
+        cmd: useradd --system --no-create-home alertmanager
+        creates: /etc/alertmanager
+      ignore_errors: true
 
 - name: Download Prometheus binary
   get_url:
