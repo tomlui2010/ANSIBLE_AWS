@@ -27,6 +27,17 @@ Resources:
       Tags:
         - Key: Name
           Value: 'prometheus_node_exporter'
+  EC2InstancePrometheusNodeExporter2:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      SecurityGroups:
+        - !Ref InstanceSecurityGroupNodeExporter
+      KeyName: !Ref SecurityKeyPair
+      ImageId: 'ami-008fe2fc65df48dac' 
+      InstanceType: t2.micro
+      Tags:
+        - Key: Name
+          Value: 'prometheus_node_exporter2'
     
   InstanceSecurityGroupPrometheusServer:
     Type: 'AWS::EC2::SecurityGroup'
