@@ -112,6 +112,7 @@
   vars: 
     aws_access_key_id: ${{ aws_access_key_id }}
     aws_secret_access_key: ${{ aws_secret_access_key }}
+    alertmanagerhost: "{{ inventory_hostname }}"
 
 - name: Copy systemd service file
   become: true
@@ -144,7 +145,7 @@
     name: python3-pip
     state: present
   become: yes
-  
+
 - name: Install Docker Python library
   pip:
     name: docker
