@@ -12,11 +12,11 @@
     - prometheusalertmanager
 
 
-#  - name: Exercise for setting up a node exporter server in an EC2
-#    hosts: prometheus_node_exporter
-#    become: true
-#    become_method: sudo
-#    become_user: root
-#    roles:
-#     - common
-#     - prometheusnodeexporter
+ - name: Exercise for setting up a node exporter server in an EC2
+   hosts: prometheus_node_exporter
+   become: true
+   become_method: sudo
+   become_user: root
+   roles:
+    - common
+    - prometheusnodeexporter
