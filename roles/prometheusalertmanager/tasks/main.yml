@@ -67,6 +67,12 @@
   vars: 
     smtp_host: "{{ inventory_hostname }}"
 
+- name: Copy Alertmanager rules
+  become: true
+  ansible.builtin.template:
+    src: rules.yml.j2
+    dest: "/etc/prometheus/rules.yml"
+
 - name: Copy systemd service file
   become: true
   ansible.builtin.template:

@@ -1,10 +1,18 @@
+global:
+  resolve_timeout: 1m
+  smtp_smarthost: '{{ smtp_host }}:1025'
+  smtp_from: 'sender@test.com'
+  smtp_require_tls: false
+
 route:
-  group_by: [Alertname]
-  receiver: email-me
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'email-notifications'
 
 receivers:
-- name: email-me
+- name: 'email-notifications'
   email_configs:
   - to: receiver@test.com
-    from: sender@test.com
-    smarthost: {{ smtp_host }}:1025
+    send_resolved: true
