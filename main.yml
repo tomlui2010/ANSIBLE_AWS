@@ -10,6 +10,7 @@
     - installdocker
     - prometheus
     - prometheusalertmanager
+    - servicerestart
 
 
  - name: Exercise for setting up a node exporter server in an EC2
@@ -20,3 +21,4 @@
    roles:
     - common
     - prometheusnodeexporter
+    - - servicerestart

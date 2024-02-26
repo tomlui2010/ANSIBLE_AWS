@@ -1,0 +1,27 @@
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    name: prometheus
+    daemon_reload: yes
+    state: reloaded
+
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    name: alertmanager
+    daemon_reload: yes
+    state: reloaded
+
+- name: Ensure prometheus is running and enabled
+  become: true
+  ansible.builtin.systemd:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: Ensure prometheus is running and enabled
+  become: true
+  ansible.builtin.systemd:
+    name: alertmanager
+    state: started
+    enabled: yes
