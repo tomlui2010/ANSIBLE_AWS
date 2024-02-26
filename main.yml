@@ -20,4 +20,4 @@
    roles:
     - common
     - prometheusnodeexporter
-    - - servicerestart
+    - servicerestart
