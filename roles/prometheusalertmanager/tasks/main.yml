@@ -45,6 +45,9 @@
   ansible.builtin.file:
     path: /var/lib/alertmanager
     state: directory
+  loop:
+    - { /etc/prometheus/alerts }
+    - { /var/lib/alertmanager }
 
 - name: Set permissions for alertmanager binaries
   become: true
@@ -63,7 +66,7 @@
   become: true
   ansible.builtin.template:
     src: alertmanager.yml.j2
-    dest: "/etc/prometheus/alertmanager.yml"
+    dest: "/etc/prometheus/alerts/alertmanager.yml"
   vars: 
     smtp_host: "{{ inventory_hostname }}"
 
@@ -71,7 +74,7 @@
   become: true
   ansible.builtin.template:
     src: rules.yml.j2
-    dest: "/etc/prometheus/rules.yml"
+    dest: "/etc/prometheus/alerts/rules.yml"
 
 - name: Copy systemd service file
   become: true
