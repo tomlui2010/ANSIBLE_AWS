@@ -1,18 +1,23 @@
-global:
-  resolve_timeout: 1m
-  smtp_smarthost: '{{ smtp_host }}:1025'
-  smtp_from: 'sender@test.com'
-  smtp_require_tls: false
+#global:
+#  resolve_timeout: 1m
+#  smtp_smarthost: '{{ smtp_host }}:1025'
+#  smtp_from: 'sender@test.com'
+#  smtp_require_tls: false
 
 route:
-  group_by: ['alertname']
   group_wait: 10s
   group_interval: 10s
-  repeat_interval: 1h
-  receiver: 'email-notifications'
+  repeat_interval: 30s
+  receiver: 'Mail Alert'
 
 receivers:
-- name: 'email-notifications'
+- name: 'Mail Alert'
   email_configs:
-  - to: receiver@test.com
-    send_resolved: true
+    - smarthost: 'smtp.gmail.com:587'
+      auth_username: 'hspecter2015@gmail.com'
+      auth_password: 'aexn svyq zoke jzak'
+      from: 'hspecter2015@gmail.com'
+      to: tomlui2010@gmail.com
+      headers: 
+        subject: 'Prometheus Mail Alerts'
+      send_resolved: true

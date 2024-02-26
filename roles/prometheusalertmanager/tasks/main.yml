@@ -61,7 +61,6 @@
     - { path: /usr/local/bin/alertmanager }
     - { path: /usr/local/bin/amtool }
     - { path: /var/lib/alertmanager }
-    - { path: /etc/prometheus/alerts }
 
 
 - name: Copy Alertmanager configuration
