@@ -43,23 +43,25 @@
 - name: add alertmanager directory
   become: true
   ansible.builtin.file:
-    path: /var/lib/alertmanager
+    path: "{{ item.path }}"
     state: directory
   loop:
-    - { /etc/prometheus/alerts }
-    - { /var/lib/alertmanager }
+    - { path: /etc/prometheus/alerts }
+    - { path: /var/lib/alertmanager }
+    - { path: /etc/prometheus/alerts }
 
 - name: Set permissions for alertmanager binaries
   become: true
   ansible.builtin.file:
     path: "{{ item.path }}"
-    owner: alertmanager
-    group: alertmanager
+    owner: prometheus
+    group: prometheus
     mode: 755
   loop:
     - { path: /usr/local/bin/alertmanager }
     - { path: /usr/local/bin/amtool }
     - { path: /var/lib/alertmanager }
+    - { path: /etc/prometheus/alerts }
 
 
 - name: Copy Alertmanager configuration
