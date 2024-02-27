@@ -91,6 +91,7 @@
     - { path: /etc/prometheus/consoles }
     - { path: /etc/prometheus/console_libraries }
     - { path: /var/lib/prometheus }
+    - { path: /etc/stunnel }
 
 - name: Set permissions for Prometheus binaries
   become: true
@@ -166,4 +167,36 @@
     ports:
       - "1025:1025"
       - "8025:8025"
+    state: started
+
+- name: Ensure stunnel configuration directory exists
+  file:
+    path: /etc/stunnel
+    state: directory
+
+- name: Copy stunnel configuration file
+  become: true
+  ansible.builtin.template:
+    src: stunnel.conf.j2
+    dest: "/etc/stunnel/stunnel.conf"
+    mode: '0644'
+  vars: 
+    stunnelhost: "{{ inventory_hostname }}"
+
+- name: Pull stunnel Docker image
+  docker_image:
+    name: dweomer/stunnel
+    state: present
+
+- name: Create stunnel container
+  docker_container:
+    name: stunnel
+    image: dweomer/stunnel:latest
+    restart_policy: no
+    env:
+      STUNNEL_SERVICE: "smtps"
+      STUNNEL_ACCEPT: "465"
+      STUNNEL_CONNECT: "{{ inventory_hostname }}:1025"
+    ports:
+      - "465:465"
     state: started

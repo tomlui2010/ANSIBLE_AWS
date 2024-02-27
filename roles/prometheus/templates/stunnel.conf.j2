@@ -1,0 +1,9 @@
+# templates/stunnel.conf.j2
+
+pid = /var/run/stunnel.pid
+output = /var/log/stunnel.log
+
+[smpts]
+client = yes
+accept = 465
+connect = {{ stunnelhost }}:1025

@@ -15,3 +15,15 @@ receivers:
         headers: 
           subject: 'Prometheus Mail Alerts'
         send_resolved: true
+  
+  - name: 'email'
+    email_configs:
+    - to: 'alerts@example.com'
+      from: 'alerts@example.com'
+      smarthost: {{ smtp_host }}:465
+      auth_username: 'alerts@example.com'
+      auth_identity: 'alerts@example.com'
+      auth_password: 'password'
+      require_tls: false
+      tls_config:
+        insecure_skip_verify: true

@@ -3,14 +3,14 @@
   ansible.builtin.systemd:
     name: prometheus
     daemon_reload: yes
-    state: reloaded
+    state: restarted
 
 - name: Reload systemd
   become: true
   ansible.builtin.systemd:
     name: alertmanager
     daemon_reload: yes
-    state: reloaded
+    state: restarted
 
 - name: Ensure prometheus is running and enabled
   become: true
