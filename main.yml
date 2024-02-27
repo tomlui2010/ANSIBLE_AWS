@@ -11,7 +11,6 @@
     - prometheus
     - prometheusalertmanager
 
-
  - name: Exercise for setting up a node exporter server in an EC2
    hosts: prometheus_node_exporter:prometheus_node_exporter2
    become: true
@@ -20,4 +19,12 @@
    roles:
     - common
     - prometheusnodeexporter
+    - servicerestart
+
+ - name: Exercise to restart prometheus and alertmanager
+   hosts: prometheus_server
+   become: true
+   become_method: sudo
+   become_user: root
+   roles:
     - servicerestart
