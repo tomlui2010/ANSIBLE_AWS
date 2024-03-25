@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Template to create infrastructure for pipeline deployment
+Description: Templates to create infrastructure for pipeline deployment
 Parameters:
   SecurityKeyPair:
     Type: String
