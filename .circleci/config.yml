@@ -94,11 +94,11 @@ jobs:
             #  cat /tmp/inventory.ini
              ansible-playbook -i /tmp/inventory.ini main.yml --limit prometheus_node_exporter
 
-      - run:
-          name: Run Playbook and Configure Node Exporter2
-          command: |
-            #  cat /tmp/inventory.ini
-             ansible-playbook -i /tmp/inventory.ini main.yml --limit prometheus_node_exporter2
+      # - run:
+      #     name: Run Playbook and Configure Node Exporter2
+      #     command: |
+      #       #  cat /tmp/inventory.ini
+      #        ansible-playbook -i /tmp/inventory.ini main.yml --limit prometheus_node_exporter2
 
 
 workflows:
