@@ -78,8 +78,8 @@ jobs:
       - run: 
           name: Install Ansible
           command: |
-             apk add --update ansible
-             apk add --update openssh
+             apk add --update ansible openssh-client
+             eval $(ssh-agent -s)
       - run:
           name: Run Playbook and Configure Prometheus 
           command: |
