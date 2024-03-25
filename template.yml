@@ -3,7 +3,7 @@ Description: Template to create infrastructure for pipeline deployment
 Parameters:
   SecurityKeyPair:
     Type: String
-    Default: promsetup 
+    Default: udapeople 
 Resources:
   EC2InstancePrometheusServer:
     Type: 'AWS::EC2::Instance'
