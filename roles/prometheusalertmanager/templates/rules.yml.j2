@@ -8,4 +8,31 @@ groups:
       severity: "warning"
     annotations:
       summary: "Out of Ram Memory "
-      description: "Ram is less then 20% "
+      description: "Ram is less than 20% "
+
+  - alert: MemoryUsage
+    expr: 100 - ((node_memory_MemAvailable_bytes * 100) / node_memory_MemTotal_bytes) > 90
+    for: 5m
+    labels:
+      severity: "high"
+    annotations:
+      summary: "Out of Ram Memory"
+      description: "Ram is less then 10%  "
+
+  - alert: MemoryUsage
+    expr: 100 - ((node_memory_MemAvailable_bytes * 100) / node_memory_MemTotal_bytes) > 95
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Out of Ram Memory"
+      description: "Ram is less then 5%"
+
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: 'critical'
+    annotations:
+      summary: Instance is down
+      description:  Instance has been down for 5 minutes
