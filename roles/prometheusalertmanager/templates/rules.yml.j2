@@ -1,11 +1,33 @@
 groups:
-  - name: Sample
+  - name: backend_ec2_monitoring_alerts_1 
     rules:
       - alert: InstanceDown
         expr: up == 0
-        for: 15s
+        for: 5m
         labels:
           severity: 'critical'
         annotations:
-          summary: " Instance is down"
-          description: "Instance is down for more than 15 seconds."
+          summary: Node {{ $labels.instance }} is down
+          description:  Node {{ $labels.instance }}  has been down for 5 minutes
+
+  - name: backend_ec2_monitoring_alerts_2 
+    rules:
+      - alert: HighMemoryUtilization
+        expr: node_memory_MemTotal - node_memory_MemFree < 0.8 * node_memory_MemTotal
+        for: 5m
+        labels:
+          severity: 'warning'
+        annotations:
+          summary: High memory utilization on host {{ $labels.instance }}
+          description:  Node {{ $labels.instance }} exceeded memory utilization of 80% for 5 minutes
+
+  - name: backend_ec2_monitoring_alerts_3
+    rules:
+      - alert: LowDiskSpace
+        expr: node_filesystem_free{fstype="ext4"} < 1e9
+        for: 5m
+        labels:
+          severity: 'critical'
+        annotations:
+          summary: Low disk space on host {{ $labels.instance }}
+          description: Disk space on Node {{ $labels.instance }} has dropped below 1G
